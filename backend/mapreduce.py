@@ -4,8 +4,6 @@
 import findspark
 findspark.init()
 from pyspark.sql import SparkSession;
-from pyspark.sql.types import StructType,StructField 
-from pyspark.sql.types import StringType, IntegerType, ArrayType
 
 spark = SparkSession.builder.master("local").appName("reviews").getOrCreate()
 sc=spark.sparkContext
@@ -16,11 +14,6 @@ columnsToDrop = ['unixReviewTime', 'verified', 'vote', 'reviewerName', 'reviewTi
 # create dataframe for json
 # I didn't know you could use pointers in Python?!
 df = spark.read.json("data/amazon_sample.json").drop(*columnsToDrop)
-
-schema = StructType([
-    StructField('asin', StringType(), True),
-    StructField('asin', StringType(), True)
-])
 
 # get the first few lines (default 10) of the sample
 def getHead(num=10):
