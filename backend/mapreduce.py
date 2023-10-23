@@ -5,6 +5,10 @@ import findspark
 findspark.init()
 from pyspark.sql import SparkSession;
 
+f = open('testfile.txt', 'w')
+
+
+
 spark = SparkSession.builder.master("local").appName("reviews").getOrCreate()
 sc=spark.sparkContext
 
@@ -13,7 +17,7 @@ columnsToDrop = ['unixReviewTime', 'verified', 'vote', 'reviewerName', 'reviewTi
 
 # create dataframe for json
 # I didn't know you could use pointers in Python?!
-df = spark.read.json("data/amazon_sample.json").drop(*columnsToDrop)
+df = spark.read.json("data/test.json").drop(*columnsToDrop)
 
 # get the first few lines (default 10) of the sample
 def getHead(num=10):
@@ -25,7 +29,8 @@ def getCol(col, amount=10):
 
 # output the distinct asin values
 def getAsins():
-    print(df.select('asin').distinct().show(100))
+    df.select('asin').distinct().write.csv('test.csv')
+    print("Rows: " + str(df.count()))
 
 test = ['asin','summary','reviewText']
 
@@ -39,5 +44,5 @@ def getReviews(fields, asin="B017O9P72A", amount=20):
 
 #getHead(20)
 #getCol('asin')
-#getAsins()
-getReviews(test, "B017OBMC1M")
+getAsins()
+#getReviews(test, "B017OBMC1M")
