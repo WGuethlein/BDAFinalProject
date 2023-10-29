@@ -82,5 +82,5 @@ class Item:
             start = time.perf_counter()
             self.df.cache()
             end = time.perf_counter()
-            print('Cache Time: ' + str(end-start))
+            #print('Cache Time: ' + str(end-start))
         self.words.show(amount)
