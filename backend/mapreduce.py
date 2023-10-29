@@ -19,11 +19,7 @@ def getWords(df):
 
 def getResult(df, asin):
     filtered_df = filter_df(df, asin)
-
-    start = time.perf_counter()
     d = getWords(filtered_df)
-    end = time.perf_counter()
 
-    print("Total Time: " + str(end-start))
     return d
 
