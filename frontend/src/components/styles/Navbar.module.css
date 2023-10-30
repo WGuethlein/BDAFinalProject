@@ -1,0 +1,21 @@
+.wrapper{
+    width:100vw;
+    height: 60px;
+    background-color: white;
+    display: flex;
+    place-items: center;
+}
+
+.amazonLogo{
+    height:45px;
+    left:10%;
+    transform: translateX(-50%);
+    position:absolute;
+}
+
+.home{
+    right:15%;
+    height:25px;
+    transform: translateX(50%);
+    position: absolute;
+}
