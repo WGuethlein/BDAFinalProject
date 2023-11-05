@@ -1,12 +1,11 @@
-## mapreduce based on asin number
-#Input: asin number
-#Output: dataframe with all words in most to least popular order
-
 import pyspark.sql.functions as f
 
 #filter dataframe, keep only the reviews that equal the asin input
 def filter_df(df, asin):
     return df.select('asin', 'summary','reviewtext').filter(df.asin == asin)
+
+def getReviews(df, asin):
+    return df.select('reviewtext').filter(df.asin == asin)
 
 # go through each review, completely reformat filtered dataframe to count each word
 def getWords(df):

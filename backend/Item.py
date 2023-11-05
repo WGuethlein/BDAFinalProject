@@ -1,5 +1,8 @@
-from mapreduce import getResult
+from mapreduce import getResult, getReviews
 import time
+from textblob import TextBlob
+from textblob.sentiments import NaiveBayesAnalyzer
+
 
 #Item class
 class Item:
@@ -28,7 +31,7 @@ class Item:
     show():
         Shows the 'words' dataframe, helper function.
     """
-    def __init__(self, asin, df, words=''):
+    def __init__(self, asin, df, words='', reviews=''):
         """
         Constructs all the necessary attributes for the item object.
 
@@ -45,6 +48,7 @@ class Item:
         self.asin = asin
         self.df = df
         self.words = words
+        self.reviews = reviews
 
     def myWords(self):
         """
@@ -60,8 +64,30 @@ class Item:
         None
         """
         self.words = getResult(self.df, self.asin)
+        if(not self.df.storageLevel.useMemory):
+            self.df.cache()
 
-    def show(self, amount=10):
+    def myReviews(self):
+        self.reviews = getReviews(self.df, self.asin)
+        if(not self.df.storageLevel.useMemory):
+            self.df.cache()
+
+    def reviewCount(self):
+        if self.reviews == '':
+            self.myReviews()
+        return self.reviews.count()
+
+    def showReviews(self,amount=10):
+        self.myReviews()
+        assert self.reviews != '', "the reviews should be filled before getting Sentiment, run the myReviews() function."
+        
+        self.reviews.show(amount)
+
+    def getRow(self, column = 'reviewText'):
+        return self.df.select(column)
+
+
+    def showWords(self, amount=10):
         """
         Shows the amount of specified rows in the 'words' dataframe.
 
@@ -77,10 +103,12 @@ class Item:
         None
         """
         # if the myWords function hasn't run yet... run it first
-        if self.words == '':
-            self.myWords()
-            start = time.perf_counter()
-            self.df.cache()
-            end = time.perf_counter()
-            #print('Cache Time: ' + str(end-start))
+        assert self.words != '', "the wordList should be filled before getting Sentiment, run the myWords() function."
+        
         self.words.show(amount)
+
+    def getSentiment(self):
+        assert self.words != '', "the wordList should be filled before getting Sentiment, run the myWords() function."
+
+        blob = TextBlob(self.words, analyzer=NaiveBayesAnalyzer())
+        return blob.sentiment

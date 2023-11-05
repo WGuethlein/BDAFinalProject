@@ -11,6 +11,9 @@ from pyspark.sql.types import BooleanType, StringType, StructField, StructType, 
 
 # other function imports
 from Item import Item
+from sent import getSentVADER, getSentTB
+import time
+
 
 def createSpark(file_loc):
     schema = StructType([
@@ -36,10 +39,22 @@ def createSpark(file_loc):
             
     return spark.read.schema(schema).json(file_loc)
 
+def testRun(item):
+    start_time = time.time()
+    avgSentVADER = getSentVADER(item)
+    print("TIME VADER: " + str(time.time() - start_time) + "sec")
+
+    start_time = time.time()
+    avgSentTB = getSentTB(item)
+    print("TIME TB: " + str(time.time() - start_time) + "sec\n")
+
+    print("Sent VADER: " + str(avgSentVADER))
+    print("Sent TB: " + str(avgSentTB) +"\n\n")
+
 def main():
     
     #get the data
-    df = createSpark('data/large_sample.json')
+    df = createSpark('data/larger_sample.json')
 
     # create test items
     p1 = Item("B017O9P72A", df)
@@ -47,11 +62,17 @@ def main():
     p3 = Item("B000VV1YOY", df)
 
     # show the results for the given item
-    p1.show()
-    p2.show()
-    p3.show()
+    #print("Amount: " + str(p1.reviewCount()))
+    #p1.showReviews()
+
+    testRun(p1)
+    testRun(p2)
+    testRun(p3)
+
 
 
 if __name__ == "__main__":
     main()
+
+
 
